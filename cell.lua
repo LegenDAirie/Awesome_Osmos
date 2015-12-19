@@ -7,50 +7,75 @@ local _H = display.contentHeight
 
 local CELL_RADIUS_RANGE = {min=5, max=30}
 
-Cell = {}
-function Cell:create(x, y, radius)
-  local cell = display.newCircle(x, y, radius)
+local Cell = {}
+function Cell:create(location, velocity, radius)
+  local cell = display.newCircle(location.x, location.y, radius)
   cell.radius = radius
+  cell.originalRadius = radius
+  cell.velocity = velocity
 
-  physics.addBody(cell, "dynamic", { density=.1, friction=0.0, bounce=0.0, radius=radius })
+  function cell:move()
+    self.x = self.x + self.velocity.x
+    self.y = self.y + self.velocity.y
+  end
+
+  function cell:currentRadius()
+    return self.xScale * self.originalRadius
+  end
 
   return cell
 end
 
 function Cell:createRandom()
-  local x = random(0, _W)
-  local y = random(0, _H)
+  local location = {
+    x = random(0, _W),
+    y = random(0, _H)
+  }
+  local velocity = {
+    x = random(-1, 1),
+    y = random(-1, 1)
+  }
   local radius = random(CELL_RADIUS_RANGE.min, CELL_RADIUS_RANGE.max)
 
-  return Cell:create(x, y, radius)
+  return Cell:create(location, velocity, radius)
 end
 
-function Cell:moveThingy(event, GameThing)
-
-  local oldCell = GameThing.cell
-
-  local dx = oldCell.x - event.x
-  local dy = oldCell.y - event.y
-
-  local magnitude = math.sqrt(dx * dx + dy * dy)
-  local normalizedVector = {
-    x = dx / magnitude,
-    y = dy / magnitude
-  }
-
-  local newRadius = 5
-
-  local cell = Cell:create(oldCell.x, oldCell.y, oldCell.radius - newRadius)
-  local ejectedCell = Cell:create(cell.x + normalizedVector.x * (cell.radius + newRadius + 1), oldCell.y + normalizedVector.y * (cell.radius + newRadius+ 1), newRadius)
-
-  local force = {x = -normalizedVector.x * 2, y  = -normalizedVector.y * 2}
-  cell:applyForce( force.x*100, force.y*100, cell.x, cell.y)
-  ejectedCell:applyForce( -force.x, -force.y, cell.x, cell.y)
-
-  oldCell:removeSelf()
-  GameThing.cell = cell
-  -- end
-end
+-- function Cell:moveThingy(event, GameThing)
+--
+--   local cell = GameThing.cell
+--
+--   local dx = cell.x - event.x
+--   local dy = cell.y - event.y
+--
+--   local magnitude = math.sqrt(dx * dx + dy * dy)
+--   local normalizedVector = {
+--     x = dx / magnitude,
+--     y = dy / magnitude
+--   }
+--
+--   local newRadius = 5
+--
+--   cell.radius = cell.xScale*cell.width
+--   cell.size= .9 * cell.radius
+--
+--   -- local cell = Cell:create(cell.x, cell.y, cell.radius - newRadius)
+--   -- cell.radius = cell.radius - 5
+--   cell:scale(cell.size, cell.size)
+--   -- print(cell.width)
+--   -- print(cell.xScale*cell.width)
+--   cell.size = 1
+--   -- cell.yScale = 1
+--   local ejectedCell = Cell:create(cell.x + normalizedVector.x * (cell.radius + newRadius + 1), cell.y + normalizedVector.y * (cell.radius + newRadius+ 1), newRadius)
+--
+--   local force = {x = -normalizedVector.x * 2, y  = -normalizedVector.y * 2}
+--   cell.velocity.x = cell.velocity.x + force.x
+--   cell.velocity.y = cell.velocity.y + force.y
+--
+--
+--   -- cell:removeSelf()
+--   -- GameThing.cell = cell
+--   -- end
+-- end
 
 
 function Cell:onLocalCollision(event)
@@ -68,7 +93,10 @@ function Cell:onLocalCollision(event)
   end
 end
 
-function Cell:scaleCell(scale)
+function Cell:sizeCell(size)
 
 end
+
+-- setmetatable(CellMetatable, Cell)
+setmetatable(Cell, CellMetatable)
 return Cell
