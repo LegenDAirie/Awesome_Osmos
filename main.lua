@@ -15,11 +15,14 @@ local _H = display.contentHeight
 
 local cellContainer = {}
 
-for i = 1, 15 do
-  cellContainer[i] = Cell:createRandom()
-end
+-- for i = 1, 15 do
+--   cellContainer[i] = Cell:createRandom()
+-- end
+cellContainer = {}
+cellContainer[1] = Cell:create({x=centerX + 150, y=centerY},{x=-1, y=0}, 25)
+cellContainer[2] = Cell:create({x=centerX - 10,  y=centerY + 25}, {x=1, y=0}, 12)
 
-GameThing.cell = Cell:create({x=centerX, y=centerY},{x=0, y=0}, 100)
+-- GameThing.cell = Cell:create({x=centerX, y=centerY},{x=0, y=0}, 1)
 
 local function moveThingy(event)
 
@@ -36,7 +39,6 @@ local function moveThingy(event)
 
 
   local scale = .9
-
   cell:scale(scale, scale)
   local radius = cell:currentRadius()
   local newRadius = radius * math.sqrt(.1)
@@ -67,12 +69,43 @@ end
 Runtime:addEventListener( "touch", pokeHandler )
 
 local tick = function( event )
-  GameThing.cell:move()
+  -- GameThing.cell:move()
   -- print(#cellContainer)
   for i = 1, #cellContainer do
     local cell = cellContainer[i]
     cell:move()
   end
+
+  for _, cell in ipairs(cellContainer) do
+    for _, otherCell in ipairs(cellContainer) do
+      if cell ~= otherCell then
+        if cell:isCollidedWith(otherCell) then
+          cell:collideWithCell(otherCell)
+        end
+      end
+    end
+  end
+
+  local newCells = {}
+  for _, cell in ipairs(cellContainer) do
+    if cell:currentRadius() > 1 then
+      newCells[#newCells + 1] = cell
+    end
+  end
+
+  cellContainer = newCells
+
+  -- for i=#cellContainer, 1, -1 do
+  --   if cellContainer[i]:currentRadius() < 5 then
+  --     cellContainer[i]:removeSelf()
+  --   end
+  -- end
+  -- for i = 1, #cellContainer do
+  --   local cell = cellContainer[i]
+  --   for j = 1, #cellContainer do
+  --     local collidedCell = cellContainer
+  --   end
+  -- end
 end
 
 Runtime:addEventListener( "enterFrame", tick )
