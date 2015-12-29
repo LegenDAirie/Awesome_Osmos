@@ -20,6 +20,35 @@ function Cell:create(location, velocity, radius)
   function cell:move()
     self.x = self.x + self.velocity.x
     self.y = self.y + self.velocity.y
+
+    local wallWithCollision = self:wallWithCollision()
+    self:collideWithWall(wallWithCollision)
+  end
+
+  function cell:collideWithWall(wallWithCollision)
+    if wallWithCollision == 'left' then
+      self.velocity.x = -self.velocity.x
+    elseif wallWithCollision == 'right' then
+      self.velocity.x = -self.velocity.x
+    elseif wallWithCollision == 'top' then
+      self.velocity.y = -self.velocity.y
+    elseif wallWithCollision == 'bottom' then
+      self.velocity.y = -self.velocity.y
+    end
+  end
+
+  function cell:wallWithCollision()
+    local radius = self:currentRadius()
+
+    if self.x - radius < 0 then
+      return 'left'
+    elseif self.x + radius > _W then
+      return 'right'
+    elseif self.y - radius < 0 then
+      return 'top'
+    elseif self.y + radius > _H then
+      return 'bottom'
+    end
   end
 
   function cell:collideWithCell(otherCell)
