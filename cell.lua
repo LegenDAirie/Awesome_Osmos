@@ -1,3 +1,5 @@
+local debugger = require('debugger')
+
 local random = math.random
 
 local centerX = display.contentCenterX
@@ -23,25 +25,28 @@ function Cell:create(location, velocity, radius)
   end
 
   function cell:collideWithCell(otherCell)
-    local cookieMonster
-    local cookie
     if self:currentRadius() >= otherCell:currentRadius() then
-      cookieMonster = self
-      cookie = otherCell
+      local distanceBetweenCells = self:distanceToOtherCell(otherCell)
 
-      local pixelsToGrow = -self:distanceToOtherCell(otherCell) / 2
+      local pixelsToGrow = -distanceBetweenCells / 2
+      local pixelsToShrink = 3 * distanceBetweenCells / 2
 
-      cookieMonster:growRadiusByPixels(pixelsToGrow)
-      cookie:growRadiusByPixels(-pixelsToGrow*2)
+      self:growRadiusByPixels(pixelsToGrow)
+      otherCell:growRadiusByPixels(pixelsToShrink)
     end
-
   end
 
   function cell:growRadiusByPixels(pixels)
     local oldRadius = self:currentRadius()
-    local newRadius = radius + pixels
+    local newRadius = oldRadius + pixels
+    print(radius)
 
-    local scale = newRadius / oldRadius
+    local scale
+    if (oldRadis ~= 0) then
+      scale = newRadius / oldRadius
+    else
+      scale = oldRadius
+    end
 
     self:scale(scale, scale)
   end
