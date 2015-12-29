@@ -15,12 +15,12 @@ local _H = display.contentHeight
 
 local cellContainer = {}
 
--- for i = 1, 15 do
---   cellContainer[i] = Cell:createRandom()
--- end
-cellContainer = {}
-cellContainer[1] = Cell:create({x=centerX + 150, y=centerY},{x=-1, y=0}, 25)
-cellContainer[2] = Cell:create({x=centerX - 10,  y=centerY + 25}, {x=1, y=0}, 12)
+for i = 1, 15 do
+  cellContainer[i] = Cell:createRandom()
+end
+-- cellContainer = {}
+-- cellContainer[1] = Cell:create({x=centerX + 40, y=centerY},{x=-0.1, y=0}, 25)
+-- cellContainer[2] = Cell:create({x=centerX - 0,  y=centerY + 25}, {x=0.1, y=0}, 12)
 
 -- GameThing.cell = Cell:create({x=centerX, y=centerY},{x=0, y=0}, 1)
 
