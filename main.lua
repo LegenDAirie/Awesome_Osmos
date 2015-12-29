@@ -90,6 +90,8 @@ local tick = function( event )
   for _, cell in ipairs(cellContainer) do
     if cell:currentRadius() > 1 then
       newCells[#newCells + 1] = cell
+    else
+      cell:removeSelf()
     end
   end
 

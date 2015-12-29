@@ -13,8 +13,6 @@ local CELL_SPEED_RANGE = {min=-100, max=100}
 local Cell = {}
 function Cell:create(location, velocity, radius)
   local cell = display.newCircle(location.x, location.y, radius)
-  cell.centerPoint = display.newCircle(location.x, location.y, radius * .05)
-  cell.centerPoint:setFillColor(0, 0, 0, 1 )
   cell:setFillColor( 1, 1, 1, .5 )
   cell.originalRadius = radius
   cell.velocity = velocity
